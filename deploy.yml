@@ -1,0 +1,15 @@
+---
+- name: Delta Node Deployment
+  remote_user: root
+  hosts: endpoints
+  tasks:
+    - name: Get Tag
+      include_role:
+        name: git-fetch-tag
+    - name: Build
+      make:
+        chdir: "{{ install_dir }}"
+        target: all
+    - name: Run Daemon
+      shell: |
+        ./delta daemon
