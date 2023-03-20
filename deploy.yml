@@ -3,6 +3,17 @@
   hosts: delta_node
   become: true
 
+  # We setup the Delta user outside of the role because otherwise things like Rust and Go installation may fail.
+  pre_tasks:
+    - name: Create a user for Delta
+      ansible.builtin.user:
+        name: "{{ delta_system_user | default('delta') }}"
+        group: "{{ delta_system_group | default('delta') }}"
+        home: "{{ delta_system_home | default('/var/lib/arg-delta') }}"
+        shell: /bin/bash
+        createhome: true
+        system: true
+
   roles:
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'

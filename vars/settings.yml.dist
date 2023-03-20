@@ -7,6 +7,7 @@ delta_version: main
 delta_main_dir: /mnt/delta
 delta_blockstore_dir: /mnt/delta/blockstore
 delta_wallet_dir: /mnt/delta/delta/wallet_estuary
+delta_system_home: /var/lib/arg-delta
 
 # Name of the user to create and deploy Delta with
 delta_system_user: 'delta'
