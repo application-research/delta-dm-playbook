@@ -1,0 +1,6 @@
+---
+- name: Reload Delta
+  ansible.builtin.systemd:
+    name: delta
+    state: reloaded
+    daemon_reload: true

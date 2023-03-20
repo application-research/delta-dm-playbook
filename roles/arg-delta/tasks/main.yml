@@ -1,0 +1,68 @@
+---
+- name: Install a build toolchain and dependencies
+  ansible.builtin.package:
+    name:
+      - git
+      - make
+      - build-essential
+      - wget
+      - jq
+      - hwloc
+      - ocl-icd-opencl-dev
+      - libhwloc-dev
+      - pkg-config
+    state: present
+
+- name: Ensure compile directory exists
+  ansible.builtin.file:
+    path: "{{ compile_dir }}"
+    state: directory
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0755'
+
+- name: Check out Delta
+  ansible.builtin.git:
+    repo: https://github.com/application-research/delta.git
+    dest: "{{ compile_dir }}"
+    version: "{{ delta_version }}"
+    force: true
+    update: true
+  become: false
+
+- name: Build Delta
+  ansible.builtin.make:
+    chdir: "{{ compile_dir }}"
+    target: all
+  become: false
+
+- name: Install Delta
+  ansible.builtin.copy:
+    src: "{{ compile_dir }}/bin/delta"
+    dest: "{{ install_dir }}/delta"
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0755'
+
+- name: Install Delta systemd service from template
+  ansible.builtin.template:
+    src: delta.service.j2
+    dest: /etc/systemd/system/delta.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Configure Delta
+  ansible.builtin.template:
+    src: delta.cfg.j2
+    dest: /etc/defaults/delta
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload Delta
+
+- name: Enable and start Delta systemd service
+  ansible.builtin.systemd:
+    name: delta
+    state: started
+    enabled: true
