@@ -1,6 +1,6 @@
 ---
 - name: Compile and deploy Delta
-  hosts: endpoints
+  hosts: delta_node
   become: true
 
   roles:
