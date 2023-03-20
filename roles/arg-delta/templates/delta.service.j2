@@ -3,8 +3,9 @@ Description=Delta Daemon Service
 
 [Service]
 EnvironmentFile=/etc/default/delta
-EnvironmentFile={{ delta_main_dir }}/.env
-ExecStart={{ binary_install_dir }}/delta daemon --repo=\${DELTA_REPO} --wallet-dir=\${DELTA_WALLET_DIR}
+EnvironmentFile={{ delta_main_dir }}/delta/.env
+WorkingDirectory={{ delta_main_dir}}/delta
+ExecStart={{ binary_install_dir }}/delta daemon --repo=${DELTA_REPO} --wallet-dir=${DELTA_WALLET_DIR}
 Restart=on-failure
 User=root
 

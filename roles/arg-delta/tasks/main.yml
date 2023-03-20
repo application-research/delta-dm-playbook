@@ -38,6 +38,30 @@
     group: "{{ delta_system_group | default('delta') }}"
     mode: '0755'
 
+- name: Ensure Delta data directory exists
+  ansible.builtin.file:
+    path: "{{ delta_main_dir }}"
+    state: directory
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0755'
+
+- name: Ensure Delta blockstore directory exists
+  ansible.builtin.file:
+    path: "{{ delta_blockstore_dir }}"
+    state: directory
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0755'
+
+- name: Ensure Delta main directory exists
+  ansible.builtin.file:
+    path: "{{ delta_main_dir }}/delta"
+    state: directory
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0755'
+
 - name: Check out Delta
   ansible.builtin.git:
     # Switch this out once the repo is public
@@ -59,11 +83,12 @@
 
 - name: Install Delta
   ansible.builtin.copy:
-    src: "{{ compile_dir }}/bin/delta"
-    dest: "{{ install_dir }}/delta"
+    src: "{{ compile_dir }}/delta"
+    dest: "{{ binary_install_dir }}/delta"
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
     mode: '0755'
+    remote_src: true
 
 - name: Install Delta systemd service from template
   ansible.builtin.template:
@@ -76,11 +101,19 @@
 - name: Configure Delta
   ansible.builtin.template:
     src: delta.cfg.j2
-    dest: /etc/defaults/delta
+    dest: /etc/default/delta
     owner: root
     group: root
     mode: '0644'
   notify: Reload Delta
+
+- name: Install .env file
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ delta_main_dir}}/delta/.env"
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0644'
 
 - name: Enable and start Delta systemd service
   ansible.builtin.systemd:

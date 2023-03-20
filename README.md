@@ -23,3 +23,4 @@ Ask in #ecosystem-dev if you have any questions, and enjoy!
 
 # TODOs/roadmap
 * Add Docker deployment option, bare metal mode will be the default for now (and probably a long time, slightly more efficient I/O)
+* Add PostgreSQL support beyond just a connection string option

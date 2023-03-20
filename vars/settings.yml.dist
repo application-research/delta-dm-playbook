@@ -18,3 +18,7 @@ compile_dir: /usr/src/arg-delta/
 
 # Install settings
 binary_install_dir: /usr/local/bin
+
+# PostgreSQL connection string
+# If not set, uses SQLite
+#postgres_connection_string: 'postgres://delta:CHANGE-ME-PLEASE@example.host'

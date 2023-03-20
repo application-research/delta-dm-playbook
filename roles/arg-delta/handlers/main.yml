@@ -5,7 +5,7 @@
     state: reloaded
     daemon_reload: true
 
-- name: Restart delta
+- name: Restart Delta
   ansible.builtin.systemd:
     name: delta
     state: restarted
