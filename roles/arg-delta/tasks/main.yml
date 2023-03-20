@@ -40,18 +40,22 @@
 
 - name: Check out Delta
   ansible.builtin.git:
-    repo: https://github.com/application-research/delta.git
+    # Switch this out once the repo is public
+    # repo: # https://github.com/application-research/delta.git
+    repo: git@github.com:application-research/delta.git
     dest: "{{ compile_dir }}"
     version: "{{ delta_version }}"
     force: true
     update: true
-  become: false
+  become_user: "{{ delta_system_user | default('delta') }}"
 
-- name: Build Delta
-  ansible.builtin.make:
+- name: Build Delta  # noqa 301
+  ansible.builtin.shell:
     chdir: "{{ compile_dir }}"
-    target: all
-  become: false
+    cmd: ". /etc/profile.d/golang.sh && make all"
+    creates: "{{ compile_dir }}/delta"
+  become_user: "{{ delta_system_user | default('delta') }}"
+  notify: Restart Delta
 
 - name: Install Delta
   ansible.builtin.copy:
