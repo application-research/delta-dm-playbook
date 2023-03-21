@@ -28,7 +28,10 @@
         system: true
 
   roles:
+    # Install Golang using the Gantsign role.
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
+    # Install Rust using a lightly customised role.
     - role: zorlin.rust
+    # Compile and install Delta, updating and restarting it if necessary.
     - role: arg-delta
