@@ -1,0 +1,24 @@
+---
+# Version of delta to deploy. Tags, branches and git commits are all valid options here. We recommend tags for predictability.
+# If an old tag is listed here, feel free to use a newer tag unless it has alpha or something similar in the name.
+delta_version: main
+
+# Delta data locations
+delta_main_dir: /mnt/delta
+delta_blockstore_dir: /mnt/delta/blockstore
+delta_wallet_dir: /mnt/delta/delta/wallet_estuary
+delta_system_home: /var/lib/arg-delta
+
+# Name of the user to create and deploy Delta with
+delta_system_user: 'delta'
+delta_system_group: 'delta'
+
+# Build settings
+compile_dir: /usr/src/arg-delta/
+
+# Install settings
+binary_install_dir: /usr/local/bin
+
+# PostgreSQL connection string
+# If not set, uses SQLite
+#postgres_connection_string: 'postgres://delta:CHANGE-ME-PLEASE@example.host'

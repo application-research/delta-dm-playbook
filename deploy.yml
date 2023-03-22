@@ -1,15 +1,37 @@
 ---
-- name: Delta Node Deployment
-  remote_user: root
-  hosts: endpoints
-  tasks:
-    - name: Get Tag
-      include_role:
-        name: git-fetch-tag
-    - name: Build
-      make:
-        chdir: "{{ install_dir }}"
-        target: all
-    - name: Run Daemon
-      shell: |
-        ./delta daemon
+- name: Compile and deploy Delta
+  hosts: delta_node
+  become: true
+
+  vars_files:
+    - "vars/settings.yml"
+
+  # We setup the Delta user outside of the role because otherwise things like Rust and Go installation may fail.
+  pre_tasks:
+    - name: Install the acl package
+      ansible.builtin.package:
+        name: acl
+        state: present
+
+    - name: Create a group for Delta
+      ansible.builtin.group:
+        name: "{{ delta_system_group | default('delta') }}"
+        system: true
+
+    - name: Create a user for Delta
+      ansible.builtin.user:
+        name: "{{ delta_system_user | default('delta') }}"
+        group: "{{ delta_system_group | default('delta') }}"
+        home: "{{ delta_system_home | default('/var/lib/arg-delta') }}"
+        shell: /bin/bash
+        createhome: true
+        system: true
+
+  roles:
+    # Install Golang using the Gantsign role.
+    - role: gantsign.golang
+      golang_gopath: '$HOME/workspace-go'
+    # Install Rust using a lightly customised role.
+    - role: zorlin.rust
+    # Compile and install Delta, updating and restarting it if necessary.
+    - role: arg-delta

@@ -1,0 +1,5 @@
+[delta_node]
+#multipass testing node
+#192.168.64.2
+#proxmox testing node
+10.1.3.114
