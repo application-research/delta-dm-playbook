@@ -1,9 +1,13 @@
 ---
-- name: Reload Delta
-  ansible.builtin.systemd:
-    name: delta
-    state: reloaded
-    daemon_reload: true
+#- name: Reload Delta
+#  ansible.builtin.systemd:
+#    name: delta
+#    state: reloaded
+#    daemon_reload: true
+
+# ^ This fails with the error:
+# RUNNING HANDLER [arg-delta : Reload Delta] **********************************************************************************************************************
+# fatal: [delta01]: FAILED! => {"changed": false, "msg": "Unable to reload service delta: Failed to reload delta.service: Job type reload is not applicable for unit delta.service.\n"}
 
 - name: Restart Delta
   ansible.builtin.systemd:

@@ -13,7 +13,7 @@
       - pkg-config
     state: present
 
-- name: Install packages needed for Ansible to not be sad
+- name: Install packages needed for Ansible
   ansible.builtin.package:
     name:
       - acl
@@ -64,9 +64,7 @@
 
 - name: Check out Delta
   ansible.builtin.git:
-    # Switch this out once the repo is public
-    # repo: # https://github.com/application-research/delta.git
-    repo: git@github.com:application-research/delta.git
+    repo: https://github.com/application-research/delta.git
     dest: "{{ compile_dir }}"
     version: "{{ delta_version }}"
     force: true
