@@ -97,10 +97,30 @@
 - name: Install .env file
   ansible.builtin.template:
     src: .env.j2
-    dest: "{{ delta_main_dir}}/delta/.env"
+    dest: "{{ delta_main_dir }}/delta/.env"
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
     mode: '0644'
+
+- name: Ensure wallet directoy exists
+  ansible.builtin.file:
+    path: "{{ delta_wallet_dir }}"
+    state: directory
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0755'
+
+- name: Install private key from wallet string
+  ansible.builtin.copy:
+    content: "{{ delta_wallet_string }}"
+    dest: "{{ item }}"
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0644'
+  loop: 
+    - "{{ delta_wallet_dir }}/MRSWMYLVNR2A"
+    - "{{ delta_wallet_dir }}/O5QWY3DFOQWWMMLQGNWDG53HNZTHK23FNVWWC5LQOFSWG53DN5YXAN3GMNTWUY3RM5YWG4JXOJVGC"
+  when: delta_wallet_string is defined
 
 - name: Enable and start Delta systemd service
   ansible.builtin.systemd:
