@@ -11,6 +11,7 @@
       ansible.builtin.stat:
         path: "{{ playbook_dir }}/vars/secrets.yml"
       register: repo_secrets_file
+      become: false
 
     - name: If repo-specific secrets file exists, load it in
       delegate_to: localhost
@@ -18,6 +19,7 @@
       ansible.builtin.include_vars:
         file: "vars/secrets.yml"
       when: repo_secrets_file.stat.exists
+      become: false
 
     - name: Install the acl package
       ansible.builtin.package:
