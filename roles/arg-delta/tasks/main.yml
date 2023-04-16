@@ -92,7 +92,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: Reload Delta
+  notify: Restart Delta
 
 - name: Install .env file
   ansible.builtin.template:
