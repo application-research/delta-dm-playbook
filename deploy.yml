@@ -3,11 +3,22 @@
   hosts: delta_node
   become: true
 
-  vars_files:
-    - "vars/settings.yml"
-
   # We setup the Delta user outside of the role because otherwise things like Rust and Go installation may fail.
   pre_tasks:
+    - name: Check if repo-specific secrets file exists
+      delegate_to: localhost
+      connection: local
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/vars/secrets.yml"
+      register: repo_secrets_file
+
+    - name: If repo-specific secrets file exists, load it in
+      delegate_to: localhost
+      connection: local
+      ansible.builtin.include_vars:
+        file: "vars/secrets.yml"
+      when: repo_secrets_file.stat.exists
+
     - name: Install the acl package
       ansible.builtin.package:
         name: acl
