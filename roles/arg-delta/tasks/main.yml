@@ -113,13 +113,13 @@
 - name: Install private key from wallet string
   ansible.builtin.copy:
     content: "{{ delta_wallet_string }}"
-    dest: "{{ item }}"
+    dest: "{{ delta_wallet_dir}}/{{ item }}"
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
     mode: '0644'
   loop: 
-    - "{{ delta_wallet_dir }}/MRSWMYLVNR2A"
-    - "{{ delta_wallet_dir }}/O5QWY3DFOQWWMMLQGNWDG53HNZTHK23FNVWWC5LQOFSWG53DN5YXAN3GMNTWUY3RM5YWG4JXOJVGC"
+    - "MRSWMYLVNR2A"
+    - "O5QWY3DFOQWWMMLQGNWDG53HNZTHK23FNVWWC5LQOFSWG53DN5YXAN3GMNTWUY3RM5YWG4JXOJVGC"
   when: delta_wallet_string is defined
 
 - name: Enable and start Delta systemd service
