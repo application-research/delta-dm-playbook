@@ -1,4 +1,4 @@
-# delta-ansible-deploy
+# delta-playbook
 Ansible tooling for automatically deploying Delta to infrastructure of your choice (thanks for using Delta!)
 
 To use:
