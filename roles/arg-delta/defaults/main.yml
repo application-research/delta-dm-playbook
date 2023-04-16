@@ -1,0 +1,3 @@
+---
+# Deploy the latest version of Delta by default
+delta_version: main

@@ -19,17 +19,6 @@
       - acl
     state: present
 
-# Handled by the playbook, not by this role. Make sure if you're having issues installing Delta with this role that you're using something
-# like this block of code in your own playbook.
-# - name: Create a user for Delta
-#   ansible.builtin.user:
-#     name: "{{ delta_system_user | default('delta') }}"
-#     group: "{{ delta_system_group | default('delta') }}"
-#     home: "{{ delta_system_home | default('/var/lib/arg-delta') }}"
-#     shell: /bin/bash
-#     createhome: true
-#     system: true
-
 - name: Ensure compile directory exists
   ansible.builtin.file:
     path: "{{ compile_dir }}"

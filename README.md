@@ -6,10 +6,6 @@ To use:
 
   `git clone https://github.com/application-research/delta-ansible-deploy`
 
-* Edit the settings in `vars/settings.yml`
-
-  `nano vars/settings.yml`
-
 * Edit an inventory file (Eg: /inventories/dev) and fill out the machine list
 
 * Install dependencies
