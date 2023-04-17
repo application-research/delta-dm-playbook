@@ -102,7 +102,7 @@
     group: "{{ delta_system_group | default('delta') }}"
     mode: '0644'
 
-- name: Ensure wallet directoy exists
+- name: Ensure wallet directory exists
   ansible.builtin.file:
     path: "{{ delta_wallet_dir }}"
     state: directory
@@ -111,8 +111,8 @@
     mode: '0755'
 
 - name: Install private key from wallet string
-  ansible.builtin.copy:
-    content: "{{ delta_wallet_string }}"
+  ansible.builtin.template:
+    src: delta_wallet.j2
     dest: "{{ delta_wallet_dir}}/{{ item }}"
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
