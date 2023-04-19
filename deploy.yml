@@ -29,6 +29,7 @@
     - name: Create a group for Delta
       ansible.builtin.group:
         name: "{{ delta_system_group | default('delta') }}"
+        gid: 1337
         system: true
 
     - name: Create a user for Delta
@@ -37,6 +38,7 @@
         group: "{{ delta_system_group | default('delta') }}"
         home: "{{ delta_system_home | default('/var/lib/arg-delta') }}"
         shell: /bin/bash
+        uid: 1337
         createhome: true
         system: true
 

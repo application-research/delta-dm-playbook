@@ -108,6 +108,7 @@
     state: directory
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
+    recurse: false
     mode: '0755'
 
 - name: Install private key from wallet string
@@ -116,10 +117,10 @@
     dest: "{{ delta_wallet_dir}}/{{ item }}"
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
-    mode: '0644'
+    mode: '0600'
   loop: 
     - "MRSWMYLVNR2A"
-    - "O5QWY3DFOQWWMMLQGNWDG53HNZTHK23FNVWWC5LQOFSWG53DN5YXAN3GMNTWUY3RM5YWG4JXOJVGC"
+    - "O5QWY3DFOQWWMML2GV4WW2DYG5YWSMTKMV2WW53MOZSTG3LVGJ5GEY3VPJZHIZLXNBRTG2LBNJWWS"
   when: delta_wallet_string is defined
 
 - name: Enable and start Delta systemd service
