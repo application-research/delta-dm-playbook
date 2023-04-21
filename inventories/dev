@@ -1,2 +1,2 @@
 [delta_node]
-delta01 ansible_host=delta01
+localhost
