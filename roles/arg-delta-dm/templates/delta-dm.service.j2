@@ -1,0 +1,13 @@
+[Unit]
+Description=Delta DM Daemon Service
+
+[Service]
+EnvironmentFile=/etc/default/delta-dm
+WorkingDirectory={{ delta_main_dir}}/delta-dm
+ExecStart={{ binary_install_dir }}/delta-dm daemon --delta-auth=${DELTA_AUTH} --delta-api=${DELTA_API}
+Restart=on-failure
+User=estuary
+Group=estuary
+
+[Install]
+WantedBy=multi-user.target

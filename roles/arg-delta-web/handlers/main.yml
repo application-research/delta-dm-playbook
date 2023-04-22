@@ -1,0 +1,6 @@
+---
+- name: Restart Delta Web
+  ansible.builtin.systemd:
+    name: delta-web
+    state: restarted
+    daemon_reload: true

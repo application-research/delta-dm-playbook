@@ -1,0 +1,86 @@
+---
+- name: Install a build toolchain and dependencies
+  ansible.builtin.package:
+    name:
+      - git
+      - make
+      - build-essential
+      - wget
+      - jq
+      - hwloc
+      - ocl-icd-opencl-dev
+      - libhwloc-dev
+      - pkg-config
+    state: present
+
+- name: Install packages needed for Ansible
+  ansible.builtin.package:
+    name:
+      - acl
+    state: present
+
+- name: Ensure compile directory exists
+  ansible.builtin.file:
+    path: "{{ delta_dm_compile_dir }}"
+    state: directory
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0755'
+
+- name: Ensure Delta DM main directory exists
+  ansible.builtin.file:
+    path: "{{ delta_main_dir }}/delta-dm"
+    state: directory
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
+    mode: '0755'
+
+- name: Check out Delta DM
+  ansible.builtin.git:
+    repo: https://github.com/application-research/delta-dm.git
+    dest: "{{ delta_dm_compile_dir }}"
+    version: "{{ delta_version }}"
+    force: true
+    update: true
+  become_user: "{{ delta_system_user | default('delta') }}"
+
+- name: Build Delta DM # noqa 301
+  ansible.builtin.shell:
+    chdir: "{{ delta_dm_compile_dir }}"
+    cmd: ". /etc/profile.d/golang.sh && make all"
+    creates: "{{ delta_dm_compile_dir }}/delta-dm"
+  become_user: "{{ delta_system_user | default('delta') }}"
+  notify: Restart Delta DM
+
+- name: Install Delta DM
+  ansible.builtin.copy:
+    src: "{{ delta_dm_compile_dir }}/delta-dm"
+    dest: "{{ binary_install_dir }}/delta-dm"
+    owner: root
+    group: root
+    mode: '0755'
+    remote_src: true
+
+- name: Install Delta DM systemd service from template
+  ansible.builtin.template:
+    src: delta-dm.service.j2
+    dest: /etc/systemd/system/delta-dm.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Configure Delta DM
+  ansible.builtin.template:
+    src: delta-dm.cfg.j2
+    dest: /etc/default/delta-dm
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Delta DM
+
+- name: Enable and start Delta DM systemd service
+  ansible.builtin.systemd:
+    name: delta-dm
+    state: started
+    enabled: true
+    daemon_reload: true

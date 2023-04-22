@@ -1,0 +1,13 @@
+[Unit]
+Description=Delta Web Daemon Service
+
+[Service]
+Environment=NEXT_PUBLIC_API_URL={{ delta_api_url }}
+WorkingDirectory={{ delta_web_compile_dir }}
+ExecStart=npm run start
+Restart=on-failure
+User=estuary
+Group=estuary
+
+[Install]
+WantedBy=multi-user.target

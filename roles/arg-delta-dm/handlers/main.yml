@@ -1,6 +1,6 @@
 ---
-- name: Restart Delta
+- name: Restart Delta DM
   ansible.builtin.systemd:
-    name: delta
+    name: delta-dm
     state: restarted
     daemon_reload: true
