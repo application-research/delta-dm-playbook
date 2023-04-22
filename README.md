@@ -1,5 +1,5 @@
-# delta-playbook
-Ansible tooling for automatically deploying Delta to infrastructure of your choice (thanks for using Delta!)
+# delta-dm-playbook
+Ansible tooling for automatically deploying Delta DM to infrastructure of your choice. Pairs well with Delta Playbook.
 
 ## Getting started
 
@@ -20,7 +20,3 @@ None of these steps will need repeating once you've done them once (unless you w
 `ansible-playbook deploy.yml`
 
 Ask in [#ecosystem-dev](https://filecoinproject.slack.com/archives/C016APFREQK) if you have any questions, and enjoy!
-
-# TODOs/roadmap
-* Add Docker deployment option, bare metal mode will be the default for now (and probably a long time, slightly more efficient I/O)
-* Add PostgreSQL support beyond just a connection string option
