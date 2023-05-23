@@ -15,6 +15,14 @@
     force: true
     update: true
   become_user: "{{ delta_system_user | default('delta') }}"
+  register: delta_web_checkout
+
+- name: If Delta git repository changed, clean up old builds
+  ansible.builtin.shell:
+    chdir: "{{ compile_dir }}"
+    cmd: "npm run clean"
+  become_user: "{{ delta_system_user | default('delta') }}"
+  when: delta_web_checkout.changed
 
 - name: Build Delta Web # noqa 301
   ansible.builtin.shell:
