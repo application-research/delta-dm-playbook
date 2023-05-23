@@ -43,6 +43,14 @@
     force: true
     update: true
   become_user: "{{ delta_system_user | default('delta') }}"
+  register: delta_dm_checkout
+
+- name: If Delta git repository changed, run make clean
+  ansible.builtin.shell:
+    chdir: "{{ compile_dir }}"
+    cmd: ". /etc/profile.d/golang.sh && make clean"
+  become_user: "{{ delta_system_user | default('delta') }}"
+  when: delta_dm_checkout.changed
 
 - name: Build Delta DM # noqa 301
   ansible.builtin.shell:
@@ -50,7 +58,6 @@
     cmd: ". /etc/profile.d/golang.sh && make all"
     creates: "{{ delta_dm_compile_dir }}/delta-dm"
   become_user: "{{ delta_system_user | default('delta') }}"
-  notify: Restart Delta DM
 
 - name: Install Delta DM
   ansible.builtin.copy:
@@ -60,6 +67,7 @@
     group: root
     mode: '0755'
     remote_src: true
+  notify: Restart Delta DM
 
 - name: Install Delta DM systemd service from template
   ansible.builtin.template:
