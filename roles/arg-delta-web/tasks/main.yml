@@ -30,6 +30,7 @@
     cmd: "export NEXT_PUBLIC_API_URL='{{ delta_dm_api_url }}' ; npm install && npm run build"
     creates: "{{ delta_web_compile_dir }}/.next"
   become_user: "{{ delta_system_user | default('delta') }}"
+  notify: Restart Delta Web
 
 - name: Install Delta Web systemd service from template
   ansible.builtin.template:
