@@ -18,9 +18,9 @@
   register: delta_web_checkout
 
 - name: If Delta git repository changed, clean up old builds
-  ansible.builtin.shell:
+  ansible.builtin.command:
     chdir: "{{ compile_dir }}"
-    cmd: "npm run clean"
+    cmd: "rm -r .next"
   become_user: "{{ delta_system_user | default('delta') }}"
   when: delta_web_checkout.changed
 
