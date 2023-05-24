@@ -47,7 +47,7 @@
 
 - name: If Delta git repository changed, run make clean
   ansible.builtin.shell:
-    chdir: "{{ compile_dir }}"
+    chdir: "{{ delta_dm_compile_dir }}"
     cmd: ". /etc/profile.d/golang.sh && make clean"
   become_user: "{{ delta_system_user | default('delta') }}"
   when: delta_dm_checkout.changed
