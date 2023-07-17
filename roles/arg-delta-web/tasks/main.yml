@@ -6,6 +6,7 @@
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
     mode: '0755'
+  run_once: true
 
 - name: Check out Delta Web on the first host
   ansible.builtin.git:
