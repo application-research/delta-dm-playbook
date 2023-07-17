@@ -37,7 +37,7 @@
 
 - name: Fetch built files from the first host to Ansible controller
   ansible.builtin.fetch:
-    src: "{{ delta_web_compile_dir }}/delta-web"
+    src: "{{ delta_web_compile_dir }}"
     dest: "/tmp/delta-web"
     flat: yes
   run_once: true
@@ -45,7 +45,7 @@
 - name: Copy built files to other hosts
   ansible.builtin.copy:
     src: "/tmp/delta-web"
-    dest: "{{ delta_web_compile_dir }}/delta-web"
+    dest: "{{ delta_web_compile_dir }}"
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
   when: inventory_hostname != ansible_play_hosts[0]
