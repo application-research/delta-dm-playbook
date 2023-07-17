@@ -65,7 +65,7 @@
     src: "/tmp/delta-web.tar.gz"
     dest: "{{ delta_web_compile_dir | dirname }}"
     remote_src: true
-    user: "{{ delta_system_user | default('delta') }}"
+    owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_user | default('delta') }}"
   when: inventory_hostname != ansible_play_hosts[0]
 
