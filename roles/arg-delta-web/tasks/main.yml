@@ -51,7 +51,7 @@
 - name: Unarchive built files on Ansible controller
   ansible.builtin.unarchive:
     src: "/tmp/delta-web.tar.gz"
-    dest: "/tmp/delta-web"
+    dest: "/tmp/"
     remote_src: yes
   delegate_to: localhost
 
