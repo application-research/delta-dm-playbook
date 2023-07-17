@@ -48,20 +48,17 @@
     flat: yes
   run_once: true
 
-- name: Unarchive built files on Ansible controller
-  ansible.builtin.unarchive:
+- name: Copy the tarball to other hosts
+  ansible.builtin.copy:
     src: "/tmp/delta-web.tar.gz"
     dest: "/tmp/"
-    remote_src: yes
-  delegate_to: localhost
-  run_once: true
+  when: inventory_hostname != ansible_play_hosts[0]
 
-- name: Copy built files to other hosts
-  ansible.builtin.copy:
-    src: "/tmp/delta-web"
+- name: Unarchive built files on other hosts
+  ansible.builtin.unarchive:
+    src: "/tmp/delta-web.tar.gz"
     dest: "{{ delta_web_compile_dir }}"
-    owner: "{{ delta_system_user | default('delta') }}"
-    group: "{{ delta_system_group | default('delta') }}"
+    remote_src: true
   when: inventory_hostname != ansible_play_hosts[0]
 
 - name: Install Delta Web systemd service from template
