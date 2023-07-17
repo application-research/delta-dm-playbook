@@ -35,7 +35,7 @@
   notify: Restart Delta Web
   run_once: true
 
-- name: Archive built files from the first host
+- name: Archive built files on the first host
   ansible.builtin.archive:
     path: "{{ delta_web_compile_dir }}"
     dest: "/tmp/delta-web.tar.gz"
@@ -54,6 +54,7 @@
     dest: "/tmp/"
     remote_src: yes
   delegate_to: localhost
+  run_once: true
 
 - name: Copy built files to other hosts
   ansible.builtin.copy:
