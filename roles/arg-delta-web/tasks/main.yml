@@ -54,6 +54,12 @@
     dest: "/tmp/"
   when: inventory_hostname != ansible_play_hosts[0]
 
+- name: Remove Delta Web compile directory and its contents
+  ansible.builtin.file:
+    path: "{{ delta_web_compile_dir }}"
+    state: absent
+  when: inventory_hostname != ansible_play_hosts[0]
+
 - name: Unarchive built files on other hosts
   ansible.builtin.unarchive:
     src: "/tmp/delta-web.tar.gz"
