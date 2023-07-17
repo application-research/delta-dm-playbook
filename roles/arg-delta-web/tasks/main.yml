@@ -7,15 +7,16 @@
     group: "{{ delta_system_group | default('delta') }}"
     mode: '0755'
 
-- name: Check out Delta Web
+- name: Check out Delta Web on the first host
   ansible.builtin.git:
-    repo: https://github.com/application-research/delta-nextjs-client.git
+    repo: https://github.com/application-research/delta-ui.git
     dest: "{{ delta_web_compile_dir }}"
     version: "{{ delta_web_version }}"
     force: true
     update: true
   become_user: "{{ delta_system_user | default('delta') }}"
   register: delta_web_checkout
+  run_once: true
 
 - name: If Delta git repository changed, clean up old builds
   ansible.builtin.command:
@@ -23,6 +24,7 @@
     cmd: "rm -r .next"
   become_user: "{{ delta_system_user | default('delta') }}"
   when: delta_web_checkout.changed
+  run_once: true
 
 - name: Build Delta Web # noqa 301
   ansible.builtin.shell:
@@ -31,6 +33,20 @@
     creates: "{{ delta_web_compile_dir }}/.next"
   become_user: "{{ delta_system_user | default('delta') }}"
   notify: Restart Delta Web
+  run_once: true
+
+- name: Fetch built files from the first host to Ansible controller
+  ansible.builtin.fetch:
+    src: "{{ delta_web_compile_dir }}/delta-web"
+    dest: "/tmp/delta-web"
+    flat: yes
+  run_once: true
+
+- name: Copy built files to other hosts
+  ansible.builtin.copy:
+    src: "/tmp/delta-web"
+    dest: "{{ delta_web_compile_dir }}/delta-web"
+  when: inventory_hostname != ansible_play_hosts[0]
 
 - name: Install Delta Web systemd service from template
   ansible.builtin.template:
