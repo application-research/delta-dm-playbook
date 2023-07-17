@@ -46,6 +46,8 @@
   ansible.builtin.copy:
     src: "/tmp/delta-web"
     dest: "{{ delta_web_compile_dir }}/delta-web"
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_group | default('delta') }}"
   when: inventory_hostname != ansible_play_hosts[0]
 
 - name: Install Delta Web systemd service from template
