@@ -80,6 +80,6 @@
 - name: Restart and enable Delta Web service
   ansible.builtin.service:
     name: delta-web
-    state: started
+    state: restarted
     enabled: true
     daemon_reload: true
