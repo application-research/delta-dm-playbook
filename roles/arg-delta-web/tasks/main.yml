@@ -6,16 +6,18 @@
     owner: "{{ delta_system_user | default('delta') }}"
     group: "{{ delta_system_group | default('delta') }}"
     mode: '0755'
+  run_once: true
 
-- name: Check out Delta Web
+- name: Check out Delta Web on the first host
   ansible.builtin.git:
-    repo: https://github.com/application-research/delta-nextjs-client.git
+    repo: https://github.com/application-research/delta-ui.git
     dest: "{{ delta_web_compile_dir }}"
     version: "{{ delta_web_version }}"
     force: true
     update: true
   become_user: "{{ delta_system_user | default('delta') }}"
   register: delta_web_checkout
+  run_once: true
 
 - name: If Delta git repository changed, clean up old builds
   ansible.builtin.command:
@@ -23,6 +25,7 @@
     cmd: "rm -r .next"
   become_user: "{{ delta_system_user | default('delta') }}"
   when: delta_web_checkout.changed
+  run_once: true
 
 - name: Build Delta Web # noqa 301
   ansible.builtin.shell:
@@ -30,7 +33,41 @@
     cmd: "export NEXT_PUBLIC_API_URL='{{ delta_dm_api_url }}' ; npm install && npm run build"
     creates: "{{ delta_web_compile_dir }}/.next"
   become_user: "{{ delta_system_user | default('delta') }}"
-  notify: Restart Delta Web
+  run_once: true
+
+- name: Archive built files on the first host
+  ansible.builtin.archive:
+    path: "{{ delta_web_compile_dir }}"
+    dest: "/tmp/delta-web.tar.gz"
+  run_once: true
+
+- name: Fetch built files from the first host to Ansible controller
+  ansible.builtin.fetch:
+    src: "/tmp/delta-web.tar.gz"
+    dest: "/tmp/"
+    flat: yes
+  run_once: true
+
+- name: Copy the tarball to other hosts
+  ansible.builtin.copy:
+    src: "/tmp/delta-web.tar.gz"
+    dest: "/tmp/"
+  when: inventory_hostname != ansible_play_hosts[0]
+
+- name: Remove Delta Web compile directory and its contents
+  ansible.builtin.file:
+    path: "{{ delta_web_compile_dir }}"
+    state: absent
+  when: inventory_hostname != ansible_play_hosts[0]
+
+- name: Unarchive built files on other hosts
+  ansible.builtin.unarchive:
+    src: "/tmp/delta-web.tar.gz"
+    dest: "{{ delta_web_compile_dir | dirname }}"
+    remote_src: true
+    owner: "{{ delta_system_user | default('delta') }}"
+    group: "{{ delta_system_user | default('delta') }}"
+  when: inventory_hostname != ansible_play_hosts[0]
 
 - name: Install Delta Web systemd service from template
   ansible.builtin.template:
@@ -40,10 +77,9 @@
     group: root
     mode: '0644'
 
-- name: Start and enable Delta Web service
+- name: Restart and enable Delta Web service
   ansible.builtin.service:
     name: delta-web
-    state: started
+    state: restarted
     enabled: true
     daemon_reload: true
-  notify: Restart Delta Web
