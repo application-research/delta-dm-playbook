@@ -33,7 +33,6 @@
     cmd: "export NEXT_PUBLIC_API_URL='{{ delta_dm_api_url }}' ; npm install && npm run build"
     creates: "{{ delta_web_compile_dir }}/.next"
   become_user: "{{ delta_system_user | default('delta') }}"
-  notify: Restart Delta Web
   run_once: true
 
 - name: Archive built files on the first host
@@ -78,10 +77,9 @@
     group: root
     mode: '0644'
 
-- name: Start and enable Delta Web service
+- name: Restart and enable Delta Web service
   ansible.builtin.service:
     name: delta-web
     state: started
     enabled: true
     daemon_reload: true
-  notify: Restart Delta Web
